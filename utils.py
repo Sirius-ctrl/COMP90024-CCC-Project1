@@ -1,41 +1,48 @@
 import json
 import os
 from collections import Counter
+import string
 
-def load_data(name="tinyTwitter.json"):
-    print("Parsing Json file")
-    with open(name, 'r') as f:
-        # data = f.read().splitlines()
-        # data = "".join(data)
-        # json_data = json.loads(data[:-1]+"]}")
-        data = f.read().strip()
-
-        # The json bracket has not been closed
-        if data[-1] == ',':
-            print("Closing the file")
-            data = data[:-1] + "]}"
-
-        # the json file has the following structure
-        # {totoal_rows, offset, rows:{[ {id, key, value, doc} ]}}
-
-        # NOTE : doc has the following keys
-        # ['_id', '_rev', 'created_at', 'id', 'id_str', 'text', 'truncated', 
-        # 'entities', 'metadata', 'source', 'in_reply_to_status_id', 
-        # 'in_reply_to_status_id_str', 'in_reply_to_user_id', 'in_reply_to_user_id_str', 
-        # 'in_reply_to_screen_name', 'user', 'geo', 'coordinates', 'place', 'contributors', 
-        # 'is_quote_status', 'retweet_count', 'favorite_count', 'favorited', 'retweeted', 'lang', 'location']
-        return json.loads(data)
+def make_line(line):
+    # remove , and \n
+    # TODO: later change it more general for the origial file as the last one does end with a ']}}'
+    return line[:-2]
 
 
-def language_generator(tweets):
-    return (i['doc']['lang'] for i in tweets['rows'])
 
+class lessReader:
+    """ read the file line by line and return a generator"""
 
-def simple_cumulator(tweets):
-    all_lang = language_generator(tweets)
-    return Counter(all_lang)
+    def __init__(self, name):
+        self.target = open(name, 'r')
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        try:
+            line = next(self.target)
+            return line
+        except StopIteration:
+            return "EOF"
 
 if __name__ == "__main__":
     # print(load_data()['rows'][0]['doc']['lang'])
-    tweets = load_data()
-    print(simple_cumulator(tweets))
+    # tweets = load_data()
+    # print(simple_cumulator(tweets))
+    lr = lessReader("smallTwitter.json")
+    header = next(lr)
+    line = next(lr)
+    i = 1
+
+    while(line != "EOF"):
+        try:
+            json.loads(make_line(line))
+        except:
+            print(i)
+            print(line)
+            exit(0)
+        line = next(lr)
+        i += 1
+
+
