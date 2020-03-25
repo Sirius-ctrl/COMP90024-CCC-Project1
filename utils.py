@@ -32,17 +32,18 @@ if __name__ == "__main__":
     # print(simple_cumulator(tweets))
     lr = lessReader("smallTwitter.json")
     header = next(lr)
-    line = next(lr)
-    i = 1
+    line = make_line(next(lr))
+    # i = 1
 
-    while(line != "EOF"):
-        try:
-            json.loads(make_line(line))
-        except:
-            print(i)
-            print(line)
-            exit(0)
-        line = next(lr)
-        i += 1
+    # while(line != "EOF"):
+    #     try:
+    #         json.loads(make_line(line))
+    #     except:
+    #         print(i)
+    #         print(line)
+    #         exit(0)
+    #     line = next(lr)
+    #     i += 1
+    print(json.loads(line)['doc']['lang'])
 
 
