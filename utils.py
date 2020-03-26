@@ -1,7 +1,10 @@
 import json
-import os
 from collections import Counter
 import string
+
+def process_line(line):
+    return [line['doc']['lang']]
+
 
 def make_line(line):
     # remove , and \n

@@ -1,5 +1,5 @@
 from mpi4py import MPI
-from utils import lessReader, make_line
+from utils import lessReader, make_line, process_line
 import json
 from collections import Counter
 import timeit
@@ -14,7 +14,7 @@ def main():
         return
     
     if rank == 0:
-        lr = lessReader("tinyTwitter.json")
+        lr = lessReader("smallTwitter.json")
         header = next(lr)
         line = ""
         flag = 0
@@ -79,7 +79,69 @@ def sequential():
     
     print(lang_acc.most_common(10))
 
+
+def split_reading():
+    # setup mpi
+    comm = MPI.COMM_WORLD
+    size = comm.Get_size()
+    rank = comm.Get_rank()
+
+    # setup file reading object
+    file_name = "smallTwitter.json"
+    lr = lessReader(file_name)
+    header = next(lr)
+
+    # setup counter
+    lang_acc = Counter()
+    hash_tag = Counter()
+
+    file_length = {"tinyTwitter.json": 1000-1,
+                   "smallTwitter.json": 5000-1, 
+                   "bigTwitter.json": 215443567-1}[file_name]
     
+    n_rows = file_length // size
+    remaining = 0
+    start = n_rows*rank
+    end = n_rows*(rank+1)
+
+    if rank == size-1:
+        # last core to catch up all
+        # note that header has already been removed and we are counting from 0
+        totoal_range = range(start, file_length, 1)
+    else:
+        totoal_range = range(start, end, 1)
+
+    print("i am rank", rank, "which reading from",
+          totoal_range[0], "to", totoal_range[-1])
+
+    i = 0
+    for line_num, line in enumerate(lr):
+        # reach the end of the file
+        if line == "EOF":
+            break
+        
+        if line_num in totoal_range:
+            # job start from now
+            data = json.loads(make_line(line))
+            lang = process_line(data)
+            lang_acc.update(lang)
+            i + 1
+        elif line_num < totoal_range[0]:
+            # not yet reach your job
+            continue
+        else:
+            # job done
+            break
+
+    lang_gather = comm.gather(lang_acc, root=0)
+    lang_final = Counter()
+    
+    print("rank", rank, "has processed",i, "lines")
+
+    if rank == 0:
+        for c in lang_gather:
+            lang_final.update(c)
+        print(lang_final.most_common(10))
 
 
 ############################## following sections are only for testing ##############################
@@ -224,7 +286,8 @@ if __name__ == "__main__":
     rank = comm.Get_rank()
 
     start = timeit.default_timer()
-    main()
+    split_reading()
+    #main()
     stop = timeit.default_timer()
 
     if rank == 0:
