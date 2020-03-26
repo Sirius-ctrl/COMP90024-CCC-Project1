@@ -115,7 +115,6 @@ def split_reading():
                    "bigTwitter.json": 215443567-1}[file_name]
     
     n_rows = file_length // size
-    remaining = 0
     start_line = n_rows*rank
     end_line = n_rows*(rank+1)
 
@@ -137,13 +136,13 @@ def split_reading():
             break
         
         if line_num >= end_line:
-            # job start from now
+            # job finished
             break
         elif line_num < start_line:
             # not yet reach your job
             continue
         else:
-            # job done
+            # job start
             data = json.loads(make_line(line))
             lang = process_line(data)
             lang_acc.update(lang)
