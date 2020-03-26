@@ -1,0 +1,1 @@
+mpirun -n 4 python testCluster.py
