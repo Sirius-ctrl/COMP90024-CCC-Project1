@@ -74,12 +74,15 @@ def sequential(file_name):
     line = next(lr)
     lang_acc = Counter()
     
+    start = timeit.default_timer()
     while line != "EOF":
         data = json.loads(make_line(line))
         lang = process_line(data)
         lang_acc.update(lang)
         line = next(lr)
-    
+    end = timeit.default_timer()
+
+    print("sequential reading takes", end-start)
     print(lang_acc.most_common(10))
 
 
@@ -124,6 +127,8 @@ def split_reading():
           totoal_range[0], "to", totoal_range[-1])
 
     i = 0
+    start = timeit.default_timer()
+
     for line_num, line in enumerate(lr):
         # reach the end of the file
         if line == "EOF":
@@ -134,18 +139,18 @@ def split_reading():
             data = json.loads(make_line(line))
             lang = process_line(data)
             lang_acc.update(lang)
-            i + 1
+            i += 1
         elif line_num < totoal_range[0]:
             # not yet reach your job
             continue
         else:
             # job done
             break
-
+    
+    end = timeit.default_timer()
+    print("rank", rank, "has processed", i, "lines", "takes", end-start)
     lang_gather = comm.gather(lang_acc, root=0)
     lang_final = Counter()
-    
-    print("rank", rank, "has processed",i, "lines")
 
     if rank == 0:
         for c in lang_gather:

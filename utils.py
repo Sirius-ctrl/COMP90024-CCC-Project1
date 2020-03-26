@@ -7,15 +7,11 @@ def process_line(line):
 
 
 def make_line(line):
-    # remove , and \n
-    # TODO: later change it more general for the origial file as the last one does end with a ']}}'
     line = line.strip()
-
     if line[-1] == ",":
         return line[:-1]
     
     return line
-
 
 
 class lessReader:
