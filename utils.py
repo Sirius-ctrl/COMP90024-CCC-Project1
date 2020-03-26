@@ -6,7 +6,12 @@ import string
 def make_line(line):
     # remove , and \n
     # TODO: later change it more general for the origial file as the last one does end with a ']}}'
-    return line[:-2]
+    line = line.strip()
+
+    if line[-1] == ",":
+        return line[:-1]
+    
+    return line
 
 
 
@@ -22,7 +27,10 @@ class lessReader:
     def __next__(self):
         try:
             line = next(self.target)
-            return line
+            if len(line) > 10:
+                return line
+            else:
+                return "EOF"
         except StopIteration:
             return "EOF"
 

@@ -8,14 +8,18 @@ def main():
     comm = MPI.COMM_WORLD
     size = comm.Get_size()
     rank = comm.Get_rank()
+
+    if size == 1:
+        sequential()
+        return
     
     if rank == 0:
-        lr = lessReader("smallTwitter.json")
+        lr = lessReader("tinyTwitter.json")
         header = next(lr)
         line = ""
         flag = 0
 
-        while True:
+        while flag < size-1:
             # all the work are done
             if flag >= size-1:
                 print("job done")
@@ -41,7 +45,11 @@ def main():
                 print(rank, "finished with", acc)
                 break
             else:
-                data = json.loads(make_line(msg))
+                try:
+                    data = json.loads(make_line(msg))
+                except:
+                    print("error line found, ending with (", msg[:-5], ") before make line")
+
                 lang_acc.update([data['doc']['lang']])
                 acc += 1
     
@@ -56,6 +64,21 @@ def main():
         print(lang_final.most_common(10))
     else:
         comm.send(lang_acc, 0)
+
+
+def sequential():
+    lr = lessReader("tinyTwitter.json")
+    header = next(lr)
+    line = next(lr)
+    lang_acc = Counter()
+    
+    while line != "EOF":
+        data = json.loads(make_line(line))
+        lang_acc.update([data['doc']['lang']])
+        line = next(lr)
+    
+    print(lang_acc.most_common(10))
+
     
 
 
