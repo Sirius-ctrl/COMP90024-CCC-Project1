@@ -75,14 +75,17 @@ def sequential(file_name):
     lang_acc = Counter()
     
     start = timeit.default_timer()
+    i = 0
     while line != "EOF":
         data = json.loads(make_line(line))
         lang = process_line(data)
         lang_acc.update(lang)
         line = next(lr)
+        i += 1
+
     end = timeit.default_timer()
 
-    print("sequential reading takes", end-start)
+    print("sequential reading takes", end-start, "processed", i, "lines")
     print(lang_acc.most_common(10))
 
 
@@ -113,43 +116,43 @@ def split_reading():
     
     n_rows = file_length // size
     remaining = 0
-    start = n_rows*rank
-    end = n_rows*(rank+1)
+    start_line = n_rows*rank
+    end_line = n_rows*(rank+1)
 
     if rank == size-1:
         # last core to catch up all
         # note that header has already been removed and we are counting from 0
-        totoal_range = range(start, file_length, 1)
-    else:
-        totoal_range = range(start, end, 1)
+        end_line = file_length+1
 
     print("i am rank", rank, "which reading from",
-          totoal_range[0], "to", totoal_range[-1])
+          start_line, "to", end_line)
 
-    i = 0
-    start = timeit.default_timer()
+    # parameters that helps debugging
+    processed_line = 0
+    start_timer = timeit.default_timer()
 
     for line_num, line in enumerate(lr):
         # reach the end of the file
         if line == "EOF":
             break
         
-        if line_num in totoal_range:
+        if line_num >= end_line:
             # job start from now
-            data = json.loads(make_line(line))
-            lang = process_line(data)
-            lang_acc.update(lang)
-            i += 1
-        elif line_num < totoal_range[0]:
+            break
+        elif line_num < start_line:
             # not yet reach your job
             continue
         else:
             # job done
-            break
+            data = json.loads(make_line(line))
+            lang = process_line(data)
+            lang_acc.update(lang)
+            processed_line += 1
     
-    end = timeit.default_timer()
-    print("rank", rank, "has processed", i, "lines", "takes", end-start)
+    end_timer = timeit.default_timer()
+    print("rank", rank, "has processed", processed_line, "lines", "takes", end_timer-start_timer)
     lang_gather = comm.gather(lang_acc, root=0)
+
     lang_final = Counter()
 
     if rank == 0:
@@ -294,15 +297,29 @@ def shit5():
     print("core", rank, "has lr", len(next(lr)))
 
 
+def shit6():
+    """
+    gather test
+    """
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+
+    a = {'a':rank}
+
+    b = comm.gather(a, root=0)
+
+    print(b)
+
+
 if __name__ == "__main__":
     comm = MPI.COMM_WORLD
     size = comm.Get_size()
     rank = comm.Get_rank()
 
-    start = timeit.default_timer()
+    start_time = timeit.default_timer()
     split_reading()
-    #main()
-    stop = timeit.default_timer()
+    #shit6()
+    stop_time = timeit.default_timer()
 
     if rank == 0:
-        print("running takes", stop - start)
+        print("running takes", stop_time - start_time)
