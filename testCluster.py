@@ -66,28 +66,37 @@ def main():
         comm.send(lang_acc, 0)
 
 
-def sequential():
-    lr = lessReader("tinyTwitter.json")
+def sequential(file_name):
+    print("runing on single core sequentially")
+
+    lr = lessReader(file_name)
     header = next(lr)
     line = next(lr)
     lang_acc = Counter()
     
     while line != "EOF":
         data = json.loads(make_line(line))
-        lang_acc.update([data['doc']['lang']])
+        lang = process_line(data)
+        lang_acc.update(lang)
         line = next(lr)
     
     print(lang_acc.most_common(10))
 
 
 def split_reading():
+
     # setup mpi
     comm = MPI.COMM_WORLD
     size = comm.Get_size()
     rank = comm.Get_rank()
 
-    # setup file reading object
     file_name = "smallTwitter.json"
+
+    if size == 1:
+        sequential(file_name)
+        return
+
+    # setup file reading object
     lr = lessReader(file_name)
     header = next(lr)
 
