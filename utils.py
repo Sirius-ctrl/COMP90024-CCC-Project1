@@ -20,7 +20,8 @@ def make_line(line):
 def illustrate(counter, name):
     print("====================  " + name + "  ====================")
     
-    i = 0
+    # ranking from 1
+    i = 1
     for k,v in counter:
         print(str(i)+". ", k+",", str(v))
         i += 1
