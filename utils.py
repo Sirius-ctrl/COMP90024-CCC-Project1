@@ -47,23 +47,9 @@ class lessReader:
             return "EOF"
 
 if __name__ == "__main__":
-    # print(load_data()['rows'][0]['doc']['lang'])
-    # tweets = load_data()
-    # print(simple_cumulator(tweets))
     lr = lessReader("smallTwitter.json")
     header = next(lr)
     line = json.loads(make_line(next(lr)))
-    # i = 1
-
-    # while(line != "EOF"):
-    #     try:
-    #         json.loads(make_line(line))
-    #     except:
-    #         print(i)
-    #         print(line)
-    #         exit(0)
-    #     line = next(lr)
-    #     i += 1
     print(process_line(line))
 
 

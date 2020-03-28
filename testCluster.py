@@ -4,68 +4,6 @@ import json
 from collections import Counter
 import timeit
 
-def main():
-    comm = MPI.COMM_WORLD
-    size = comm.Get_size()
-    rank = comm.Get_rank()
-
-    if size == 1:
-        sequential()
-        return
-    
-    if rank == 0:
-        lr = lessReader("smallTwitter.json")
-        header = next(lr)
-        line = ""
-        flag = 0
-
-        while flag < size-1:
-            # all the work are done
-            if flag >= size-1:
-                print("job done")
-                break
-
-            worker = comm.recv()
-
-            if type(worker) is str:
-                flag += 1
-                continue
-
-            line = next(lr)
-            comm.send(line, dest=int(worker))
-    else:
-        acc = 0
-        lang_acc = Counter()
-        while True:
-            comm.send(rank, 0)
-            msg = comm.recv(source=0)
-
-            if msg == "EOF":
-                comm.send("done", 0)
-                print(rank, "finished with", acc)
-                break
-            else:
-                try:
-                    data = json.loads(make_line(msg))
-                except:
-                    print("error line found, ending with (", msg[:-5], ") before make line")
-
-                lang_acc.update([data['doc']['lang']])
-                acc += 1
-    
-    comm.barrier()
-
-    # now starting to collect the result
-    if rank == 0:
-        lang_final = Counter()
-        for _ in range(size-1):
-            lang_final.update(comm.recv())
-            
-        print(lang_final.most_common(10))
-    else:
-        comm.send(lang_acc, 0)
-
-
 def sequential(file_name):
     print("runing on single core sequentially")
 
@@ -77,6 +15,7 @@ def sequential(file_name):
     
     start = timeit.default_timer()
     i = 0
+    
     while line != "EOF":
         data = json.loads(make_line(line))
         lang, hashtag = process_line(data)
@@ -170,6 +109,70 @@ def split_reading():
 
 ############################## following sections are only for testing ##############################
 
+
+def work_queue_model():
+    comm = MPI.COMM_WORLD
+    size = comm.Get_size()
+    rank = comm.Get_rank()
+
+    if size == 1:
+        sequential()
+        return
+
+    if rank == 0:
+        lr = lessReader("smallTwitter.json")
+        header = next(lr)
+        line = ""
+        flag = 0
+
+        while flag < size-1:
+            # all the work are done
+            if flag >= size-1:
+                print("job done")
+                break
+
+            worker = comm.recv()
+
+            if type(worker) is str:
+                flag += 1
+                continue
+
+            line = next(lr)
+            comm.send(line, dest=int(worker))
+    else:
+        acc = 0
+        lang_acc = Counter()
+        while True:
+            comm.send(rank, 0)
+            msg = comm.recv(source=0)
+
+            if msg == "EOF":
+                comm.send("done", 0)
+                print(rank, "finished with", acc)
+                break
+            else:
+                try:
+                    data = json.loads(make_line(msg))
+                except:
+                    print("error line found, ending with (",
+                          msg[:-5], ") before make line")
+
+                lang_acc.update([data['doc']['lang']])
+                acc += 1
+
+    comm.barrier()
+
+    # now starting to collect the result
+    if rank == 0:
+        lang_final = Counter()
+        for _ in range(size-1):
+            lang_final.update(comm.recv())
+
+        print(lang_final.most_common(10))
+    else:
+        comm.send(lang_acc, 0)
+
+
 def distributed(data):
     comm = MPI.COMM_WORLD
 
@@ -181,7 +184,7 @@ def distributed(data):
     print(data, "rank =", rank)
 
 
-def shit():
+def example():
     """
     this work fine
     """
@@ -202,7 +205,7 @@ def shit():
         print("procss", rank, "sent")
         s = comm.send("done"+str(rank), 0)
 
-def shit2():
+def example2():
     """
     this work fine
     """
@@ -234,7 +237,7 @@ def shit2():
     print(rank, "job done")
 
 
-def shit3():
+def example3():
     """
     this one works
     """
@@ -270,7 +273,7 @@ def shit3():
     print(rank, "job done")
 
 
-def shit4():
+def example4():
     """
     this one work, demo for bcast
     """
@@ -287,7 +290,7 @@ def shit4():
     print("core", rank, "has data", data)
 
 
-def shit5():
+def example5():
     """
     demo for multiple core share a same reading object
     """
@@ -304,7 +307,7 @@ def shit5():
     print("core", rank, "has lr", len(next(lr)))
 
 
-def shit6():
+def example6():
     """
     gather test
     """
@@ -325,7 +328,6 @@ if __name__ == "__main__":
 
     start_time = timeit.default_timer()
     split_reading()
-    #shit6()
     stop_time = timeit.default_timer()
 
     if rank == 0:
