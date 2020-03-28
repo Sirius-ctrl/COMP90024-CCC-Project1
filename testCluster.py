@@ -1,9 +1,8 @@
 from mpi4py import MPI
-from utils import lessReader, make_line, process_line
+from utils import lessReader, make_line, process_line, illustrate
 import json
 from collections import Counter
 import timeit
-import subprocess
 
 def main():
     comm = MPI.COMM_WORLD
@@ -74,20 +73,23 @@ def sequential(file_name):
     header = next(lr)
     line = next(lr)
     lang_acc = Counter()
+    hash_tags = Counter()
     
     start = timeit.default_timer()
     i = 0
     while line != "EOF":
         data = json.loads(make_line(line))
-        lang = process_line(data)
+        lang, hashtag = process_line(data)
         lang_acc.update(lang)
+        hash_tags.update(hashtag)
         line = next(lr)
         i += 1
 
     end = timeit.default_timer()
 
     print("sequential reading takes", end-start, "processed", i, "lines")
-    print(lang_acc.most_common(10))
+    illustrate(lang_acc.most_common(10), "LANGUAGE")
+    illustrate(hash_tags.most_common(10), "HASHTAGS")
 
 
 def split_reading():
@@ -111,6 +113,7 @@ def split_reading():
     lang_acc = Counter()
     hash_tag = Counter()
 
+    # just hard code line number which can be easily obtained using wc -l <filename>
     file_length = {"tinyTwitter.json": 1000-1,
                    "smallTwitter.json": 5000-1, 
                    "bigTwitter.json": 4057525-1}[file_name]
@@ -144,20 +147,25 @@ def split_reading():
         else:
             # job start
             data = json.loads(make_line(line))
-            lang = process_line(data)
+            lang, hashtags = process_line(data)
             lang_acc.update(lang)
+            hash_tag.update(hashtags)
             processed_line += 1
     
     end_timer = timeit.default_timer()
     print("rank", rank, "has processed", processed_line, "lines", "takes", end_timer-start_timer)
     lang_gather = comm.gather(lang_acc, root=0)
+    hash_tag_gather = comm.gather(hash_tag, root=0)
 
     lang_final = Counter()
+    hash_tag_fianl = Counter()
 
     if rank == 0:
-        for c in lang_gather:
-            lang_final.update(c)
-        print(lang_final.most_common(10))
+        for i in range(size):
+            lang_final.update(lang_gather[i])
+            hash_tag_fianl.update(hash_tag_gather[i])
+        illustrate(lang_final.most_common(10), "LANGUAGE")
+        illustrate(hash_tag_fianl.most_common(10), "HASHTAGS")
 
 
 ############################## following sections are only for testing ##############################

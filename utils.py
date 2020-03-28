@@ -2,9 +2,12 @@ import json
 from collections import Counter
 import string
 import subprocess
+import re
 
 def process_line(line):
-    return [line['doc']['lang']]
+    hashtags = re.findall("#[a-zA-Z0-9_]+", line['doc']['text'].lower())
+    
+    return [line['doc']['lang']], hashtags
 
 
 def make_line(line):
@@ -14,6 +17,15 @@ def make_line(line):
     
     return line
 
+def illustrate(counter, name):
+    print("====================  " + name + "  ====================")
+    
+    i = 0
+    for k,v in counter:
+        print(str(i)+". ", k+",", str(v))
+        i += 1
+
+    print("======================" + "="*len(name) + "======================\n")
 
 class lessReader:
     """ read the file line by line and return a generator"""
@@ -40,7 +52,7 @@ if __name__ == "__main__":
     # print(simple_cumulator(tweets))
     lr = lessReader("smallTwitter.json")
     header = next(lr)
-    line = make_line(next(lr))
+    line = json.loads(make_line(next(lr)))
     # i = 1
 
     # while(line != "EOF"):
@@ -52,6 +64,6 @@ if __name__ == "__main__":
     #         exit(0)
     #     line = next(lr)
     #     i += 1
-    print(json.loads(line)['doc']['lang'])
+    print(process_line(line))
 
 
