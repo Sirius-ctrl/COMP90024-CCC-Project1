@@ -3,6 +3,7 @@ from utils import lessReader, make_line, process_line
 import json
 from collections import Counter
 import timeit
+import subprocess
 
 def main():
     comm = MPI.COMM_WORLD
@@ -96,7 +97,7 @@ def split_reading():
     size = comm.Get_size()
     rank = comm.Get_rank()
 
-    file_name = "smallTwitter.json"
+    file_name = "bigTwitter.json"
 
     if size == 1:
         sequential(file_name)
@@ -112,7 +113,7 @@ def split_reading():
 
     file_length = {"tinyTwitter.json": 1000-1,
                    "smallTwitter.json": 5000-1, 
-                   "bigTwitter.json": 215443567-1}[file_name]
+                   "bigTwitter.json": 4057525-1}[file_name]
     
     n_rows = file_length // size
     start_line = n_rows*rank
@@ -134,7 +135,6 @@ def split_reading():
         # reach the end of the file
         if line == "EOF":
             break
-        
         if line_num >= end_line:
             # job finished
             break

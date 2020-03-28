@@ -1,6 +1,7 @@
 import json
 from collections import Counter
 import string
+import subprocess
 
 def process_line(line):
     return [line['doc']['lang']]
