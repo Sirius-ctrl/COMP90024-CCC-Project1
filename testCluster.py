@@ -60,7 +60,7 @@ def split_reading():
     # find the length of a file as the head is not realiable for all file
     if rank == 0:
         import subprocess
-        out = subprocess.Popen(["wc", "-l", "smallTwitter.json"],
+        out = subprocess.Popen(["wc", "-l", file_name],
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         stdout, stderr = out.communicate()
         # remove header
