@@ -38,7 +38,7 @@ def split_reading():
     size = comm.Get_size()
     rank = comm.Get_rank()
 
-    file_name = "bigTwitter.json"
+    file_name = "smallTwitter.json"
 
     if size == 1:
         sequential(file_name)
@@ -52,10 +52,23 @@ def split_reading():
     lang_acc = Counter()
     hash_tag = Counter()
 
-    # just hard code line number which can be easily obtained using wc -l <filename>
-    file_length = {"tinyTwitter.json": 1000-1,
-                   "smallTwitter.json": 5000-1, 
-                   "bigTwitter.json": 4057525-1}[file_name]
+    # # just hard code line number which can be easily obtained using wc -l <filename>
+    # file_length = {"tinyTwitter.json": 1000-1,
+    #                "smallTwitter.json": 5000-1, 
+    #                "bigTwitter.json": 4057525-1}[file_name]
+
+    # find the length of a file as the head is not realiable for all file
+    if rank == 0:
+        import subprocess
+        out = subprocess.Popen(["wc", "-l", "smallTwitter.json"],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        stdout, stderr = out.communicate()
+        # remove header
+        file_length = int(stdout.split()[0])-1
+    else:
+        file_length = None
+        
+    file_length = comm.bcast(file_length, root=0)
     
     n_rows = file_length // size
     start_line = n_rows*rank

@@ -23,7 +23,11 @@ def illustrate(counter, name):
     # ranking from 1
     i = 1
     for k,v in counter:
-        print(str(i)+". ", k+",", str(v))
+
+        if i <= 9:
+            print(str(i)+". ", k+",", str(v))
+        else:
+            print(str(i)+".", k+",", str(v))
         i += 1
 
     print("======================" + "="*len(name) + "======================\n")
@@ -48,9 +52,8 @@ class lessReader:
             return "EOF"
 
 if __name__ == "__main__":
-    lr = lessReader("smallTwitter.json")
-    header = next(lr)
-    line = json.loads(make_line(next(lr)))
-    print(process_line(line))
-
+    import subprocess
+    out = subprocess.Popen(["wc", "-l", "smallTwitter.json"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+    print(int(stdout.split()[0]))
 
