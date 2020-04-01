@@ -1,0 +1,3 @@
+sbatch physical_1n1c.slurm
+sbatch physical_1n8c.slurm
+sbatch physical_2n8c.slurm

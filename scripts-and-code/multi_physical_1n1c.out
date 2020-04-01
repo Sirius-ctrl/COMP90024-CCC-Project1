@@ -1,0 +1,33 @@
+runing on single core sequentially
+sequential reading takes 483.6831887550652 processed 4057523 lines
+====================  LANGUAGE  ====================
+1.  en, 3107116
+2.  und, 252117
+3.  th, 134571
+4.  pt, 125858
+5.  es, 74028
+6.  ja, 49929
+7.  tl, 44560
+8.  in, 42296
+9.  fr, 38098
+10. ar, 24501
+====================================================
+
+====================  HASHTAGS  ====================
+1.  #auspol, 19891
+2.  #coronavirus, 10125
+3.  #firefightaustralia, 6814
+4.  #oldme, 6419
+5.  #sydney, 6376
+6.  #scottyfrommarketing, 5185
+7.  #grammys, 5085
+8.  #assange, 4689
+9.  #sportsrorts, 4516
+10. #iheartawards, 4297
+====================================================
+
+running takes 483.6969950944185
+
+real	8m4.004s
+user	0m0.019s
+sys	0m0.019s

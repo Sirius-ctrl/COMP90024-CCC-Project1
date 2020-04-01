@@ -1,0 +1,59 @@
+i am rank 1 which reading from 253595 to 507190
+rank 1 has processed 253595 lines takes 32.665762001648545
+i am rank 2 which reading from 507190 to 760785
+rank 2 has processed 253595 lines takes 38.32281271368265
+i am rank 3 which reading from 760785 to 1014380
+rank 3 has processed 253595 lines takes 45.91488494537771
+i am rank 4 which reading from 1014380 to 1267975
+rank 4 has processed 253595 lines takes 50.99124984815717
+i am rank 5 which reading from 1267975 to 1521570
+rank 5 has processed 253595 lines takes 58.134951427578926
+i am rank 6 which reading from 1521570 to 1775165
+rank 6 has processed 253595 lines takes 64.24102281592786
+i am rank 7 which reading from 1775165 to 2028760
+rank 7 has processed 253595 lines takes 71.35177124664187
+i am rank 9 which reading from 2282355 to 2535950
+rank 9 has processed 253595 lines takes 80.0000163950026
+i am rank 10 which reading from 2535950 to 2789545
+rank 10 has processed 253595 lines takes 85.96285882219672
+i am rank 8 which reading from 2028760 to 2282355
+rank 8 has processed 253595 lines takes 75.69349277578294
+i am rank 11 which reading from 2789545 to 3043140
+rank 11 has processed 253595 lines takes 91.67494980059564
+i am rank 12 which reading from 3043140 to 3296735
+rank 12 has processed 253595 lines takes 96.87333579733968
+i am rank 13 which reading from 3296735 to 3550330
+rank 13 has processed 253595 lines takes 103.4570075366646
+i am rank 14 which reading from 3550330 to 3803925
+rank 14 has processed 253595 lines takes 109.13309185951948
+i am rank 15 which reading from 3803925 to 4057525
+rank 15 has processed 253598 lines takes 115.14522716030478
+i am rank 0 which reading from 0 to 253595
+rank 0 has processed 253595 lines takes 25.42744729667902
+====================  LANGUAGE  ====================
+1.  en, 3107116
+2.  und, 252117
+3.  th, 134571
+4.  pt, 125858
+5.  es, 74028
+6.  ja, 49929
+7.  tl, 44560
+8.  in, 42296
+9.  fr, 38098
+10. ar, 24501
+====================================================
+
+====================  HASHTAGS  ====================
+1.  #auspol, 19891
+2.  #coronavirus, 10125
+3.  #firefightaustralia, 6814
+4.  #oldme, 6419
+5.  #sydney, 6376
+6.  #scottyfrommarketing, 5185
+7.  #grammys, 5085
+8.  #assange, 4689
+9.  #sportsrorts, 4516
+10. #iheartawards, 4297
+====================================================
+
+running takes 121.61162229254842

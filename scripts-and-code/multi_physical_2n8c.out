@@ -1,0 +1,47 @@
+i am rank 1 which reading from 507190 to 1014380
+rank 1 has processed 507190 lines takes 62.008349280804396
+i am rank 4 which reading from 2028760 to 2535950
+rank 4 has processed 507190 lines takes 96.37519493699074
+i am rank 2 which reading from 1014380 to 1521570
+rank 2 has processed 507190 lines takes 74.01758333854377
+i am rank 5 which reading from 2535950 to 3043140
+rank 5 has processed 507190 lines takes 107.22783548384905
+i am rank 3 which reading from 1521570 to 2028760
+rank 3 has processed 507190 lines takes 87.00582991912961
+i am rank 6 which reading from 3043140 to 3550330
+rank 6 has processed 507190 lines takes 119.13613138720393
+i am rank 7 which reading from 3550330 to 4057525
+rank 7 has processed 507193 lines takes 131.19474933482707
+i am rank 0 which reading from 0 to 507190
+rank 0 has processed 507190 lines takes 49.4113055113703
+====================  LANGUAGE  ====================
+1.  en, 3107116
+2.  und, 252117
+3.  th, 134571
+4.  pt, 125858
+5.  es, 74028
+6.  ja, 49929
+7.  tl, 44560
+8.  in, 42296
+9.  fr, 38098
+10. ar, 24501
+====================================================
+
+====================  HASHTAGS  ====================
+1.  #auspol, 19891
+2.  #coronavirus, 10125
+3.  #firefightaustralia, 6814
+4.  #oldme, 6419
+5.  #sydney, 6376
+6.  #scottyfrommarketing, 5185
+7.  #grammys, 5085
+8.  #assange, 4689
+9.  #sportsrorts, 4516
+10. #iheartawards, 4297
+====================================================
+
+running takes 137.41369985044003
+
+real	2m18.020s
+user	0m0.022s
+sys	0m0.035s
